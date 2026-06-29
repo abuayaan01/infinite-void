@@ -1,23 +1,24 @@
-import { useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
-import { ParticleSystem } from "./ParticleSystem";
-import type { DomainPhase } from "@/types";
-import * as THREE from "three";
+import { useRef } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
+// import { BlendFunction } from 'postprocessing'
+import { ParticleSystem } from './ParticleSystem'
+import type { DomainPhase } from '@/types'
+import * as THREE from 'three'
 
 /* ── Inner scene (inside Canvas context) ── */
 function SceneContents({ phase }: { phase: DomainPhase }) {
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<THREE.Group>(null)
 
   // Subtle camera breathing effect
   useFrame(({ camera, clock }) => {
-    const t = clock.getElapsedTime();
-    camera.position.y = Math.sin(t * 0.3) * 0.3;
-    camera.position.x = Math.cos(t * 0.2) * 0.2;
-    camera.lookAt(0, 0, 0);
-  });
+    const t = clock.getElapsedTime()
+    camera.position.y = Math.sin(t * 0.3) * 0.3
+    camera.position.x = Math.cos(t * 0.2) * 0.2
+    camera.lookAt(0, 0, 0)
+  })
 
-  const isActive = phase === "activating" || phase === "expanded";
+  const isActive = phase === 'activating' || phase === 'expanded'
 
   return (
     <>
@@ -43,7 +44,11 @@ function SceneContents({ phase }: { phase: DomainPhase }) {
       />
 
       <group ref={groupRef}>
-        <ParticleSystem count={10000} spread={200} active={isActive} />
+        <ParticleSystem
+          count={10000}
+          spread={200}
+          active={isActive}
+        />
       </group>
 
       {/* Post processing */}
@@ -52,17 +57,23 @@ function SceneContents({ phase }: { phase: DomainPhase }) {
           intensity={isActive ? 1.8 : 0}
           luminanceThreshold={0.1}
           luminanceSmoothing={0.9}
+          // blendFunction={BlendFunction.ADD}
           mipmapBlur
         />
-        <Vignette offset={0.3} darkness={isActive ? 0.95 : 1} />
+        <Vignette
+          eskil={false}
+          offset={0.1}
+          darkness={isActive ? 0.9 : 1}
+          // blendFunction={BlendFunction.NORMAL}
+        />
       </EffectComposer>
     </>
-  );
+  )
 }
 
 /* ── Exported canvas wrapper ── */
 interface VoidSceneProps {
-  phase: DomainPhase;
+  phase: DomainPhase
 }
 
 export function VoidScene({ phase }: VoidSceneProps) {
@@ -74,12 +85,13 @@ export function VoidScene({ phase }: VoidSceneProps) {
           antialias: true,
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.2,
-          powerPreference: "high-performance",
+          powerPreference: 'high-performance',
         }}
-        dpr={[1, 2]} // Limit pixel ratio for performance
+        dpr={[1, 2]}
+        frameloop={phase === 'warping' || phase === 'activating' ? 'never' : 'always'}
       >
         <SceneContents phase={phase} />
       </Canvas>
     </div>
-  );
+  )
 }

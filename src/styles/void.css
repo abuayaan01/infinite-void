@@ -43,102 +43,30 @@
   animation: pulse 2s ease-in-out 2.5s infinite;
 }
 
-/* ── Glitch Effect ── */
 .glitch {
-  animation: glitch 0.4s steps(2) forwards;
+  animation: glitch 0.6s steps(3) forwards;
 }
 
 @keyframes glitch {
-  0% {
-    filter: none;
-    transform: translate(0);
-  }
-  20% {
-    filter: hue-rotate(90deg) saturate(5);
-    transform: translate(-4px, 2px);
-  }
-  40% {
-    filter: invert(1);
-    transform: translate(4px, -2px);
-  }
-  60% {
-    filter: hue-rotate(180deg);
-    transform: translate(-2px, 4px);
-  }
-  80% {
-    filter: brightness(3);
-    transform: translate(2px, -4px);
-  }
-  100% {
-    filter: none;
-    transform: translate(0);
-  }
+  0%   { filter: none;                          transform: translate(0); }
+  15%  { filter: hue-rotate(90deg) saturate(8); transform: translate(-6px, 3px); }
+  30%  { filter: invert(1) brightness(2);       transform: translate(6px, -3px); }
+  45%  { filter: hue-rotate(180deg) saturate(5);transform: translate(-3px, 6px); }
+  60%  { filter: brightness(4) saturate(0);     transform: translate(3px, -6px); }
+  75%  { filter: hue-rotate(270deg);            transform: translate(-4px, 2px); }
+  100% { filter: none;                          transform: translate(0); }
 }
 
-/* ── Shockwave Ring ── */
-.shockwave {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  background: transparent;
-  border: 2px solid var(--color-gojo-blue);
-  box-shadow: 0 0 20px var(--color-gojo-blue), 0 0 40px var(--color-gojo-purple),
-    inset 0 0 20px rgba(79, 195, 247, 0.2);
-  z-index: 9999; /* ← was var(--z-overlay), now hard 9999 above canvas */
-  pointer-events: none;
-  animation: shockwaveExpand 1.2s var(--ease-out) forwards;
-}
 
-@keyframes shockwaveExpand {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 1;
-  }
-  70% {
-    transform: translate(-50%, -50%) scale(300);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(500);
-    opacity: 0;
-  }
-}
-
-/* ── Void Overlay (fades out activation screen) ── */
-.void-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: calc(var(--z-activation) - 1);
-  background: var(--color-void);
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity 1.5s var(--ease-void);
-}
-
-.void-overlay--transparent {
-  opacity: 0;
-}
 
 /* ── Keyframes ── */
 @keyframes fadeUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes pulse {
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 0.8;
-  }
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.8; }
 }
 
 /* ── Glass Card (used in sections) ── */
@@ -148,22 +76,26 @@
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(79, 195, 247, 0.15);
   border-radius: 12px;
-  box-shadow: 0 0 30px rgba(79, 195, 247, 0.05),
+  box-shadow:
+    0 0 30px rgba(79, 195, 247, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transition: border-color 0.3s var(--ease-void),
-    box-shadow 0.3s var(--ease-void);
+              box-shadow 0.3s var(--ease-void);
 }
 
 .glass-card:hover {
   border-color: rgba(79, 195, 247, 0.4);
-  box-shadow: 0 0 50px rgba(79, 195, 247, 0.1),
+  box-shadow:
+    0 0 50px rgba(79, 195, 247, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* ── Glow Text ── */
 .glow-text {
-  text-shadow: 0 0 10px var(--color-gojo-blue),
-    0 0 30px var(--color-gojo-purple), 0 0 60px rgba(79, 195, 247, 0.3);
+  text-shadow:
+    0 0 10px var(--color-gojo-blue),
+    0 0 30px var(--color-gojo-purple),
+    0 0 60px rgba(79, 195, 247, 0.3);
 }
 
 /* ── Reduced Motion ── */
