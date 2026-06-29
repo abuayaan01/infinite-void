@@ -1,0 +1,88 @@
+/* ── Custom Properties ── */
+:root {
+    /* Void palette */
+    --color-void:        #000000;
+    --color-infinity:    #0a0a1a;
+    --color-gojo-blue:   #4fc3f7;
+    --color-gojo-purple: #7c4dff;
+    --color-gojo-white:  #e8eaf6;
+    --color-cursed:      #b39ddb;
+    --color-glow:        rgba(79, 195, 247, 0.6);
+  
+    /* Typography */
+    --font-primary:  'Inter', system-ui, sans-serif;
+    --font-display:  'Space Grotesk', system-ui, sans-serif;
+  
+    /* Spacing */
+    --space-xs:  0.25rem;
+    --space-sm:  0.5rem;
+    --space-md:  1rem;
+    --space-lg:  2rem;
+    --space-xl:  4rem;
+    --space-2xl: 8rem;
+  
+    /* Transitions */
+    --ease-void: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in:   cubic-bezier(0.4, 0, 1, 1);
+    --ease-out:  cubic-bezier(0, 0, 0.2, 1);
+  
+    /* Z-layers */
+    --z-canvas:     0;
+    --z-ui:         10;
+    --z-overlay:    20;
+    --z-activation: 30;
+    --z-loader:     40;
+  }
+  
+  /* ── Reset ── */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background-color: var(--color-void);
+    color: var(--color-gojo-white);
+    font-family: var(--font-primary);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+  
+  /* Hide scrollbar but keep scroll */
+  body::-webkit-scrollbar { display: none; }
+  body { -ms-overflow-style: none; scrollbar-width: none; }
+  
+  /* ── Utility Classes ── */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  .canvas-container {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-canvas);
+    pointer-events: none;
+  }
+  
+  .ui-layer {
+    position: relative;
+    z-index: var(--z-ui);
+  }

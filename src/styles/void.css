@@ -1,0 +1,178 @@
+/* ── Activation Screen ── */
+.activation-screen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-activation);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-void);
+  cursor: pointer;
+  user-select: none;
+}
+
+.activation-screen__name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 5rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--color-gojo-white);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s var(--ease-void) 0.5s forwards;
+}
+
+.activation-screen__prompt {
+  margin-top: var(--space-md);
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-gojo-blue);
+  opacity: 0;
+  animation: fadeUp 1s var(--ease-void) 1.2s forwards;
+}
+
+.activation-screen__hint {
+  position: absolute;
+  bottom: var(--space-xl);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--color-cursed);
+  opacity: 0;
+  animation: pulse 2s ease-in-out 2.5s infinite;
+}
+
+/* ── Glitch Effect ── */
+.glitch {
+  animation: glitch 0.4s steps(2) forwards;
+}
+
+@keyframes glitch {
+  0% {
+    filter: none;
+    transform: translate(0);
+  }
+  20% {
+    filter: hue-rotate(90deg) saturate(5);
+    transform: translate(-4px, 2px);
+  }
+  40% {
+    filter: invert(1);
+    transform: translate(4px, -2px);
+  }
+  60% {
+    filter: hue-rotate(180deg);
+    transform: translate(-2px, 4px);
+  }
+  80% {
+    filter: brightness(3);
+    transform: translate(2px, -4px);
+  }
+  100% {
+    filter: none;
+    transform: translate(0);
+  }
+}
+
+/* ── Shockwave Ring ── */
+.shockwave {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: transparent;
+  border: 2px solid var(--color-gojo-blue);
+  box-shadow: 0 0 20px var(--color-gojo-blue), 0 0 40px var(--color-gojo-purple),
+    inset 0 0 20px rgba(79, 195, 247, 0.2);
+  z-index: 9999; /* ← was var(--z-overlay), now hard 9999 above canvas */
+  pointer-events: none;
+  animation: shockwaveExpand 1.2s var(--ease-out) forwards;
+}
+
+@keyframes shockwaveExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(300);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(500);
+    opacity: 0;
+  }
+}
+
+/* ── Void Overlay (fades out activation screen) ── */
+.void-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-activation) - 1);
+  background: var(--color-void);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 1.5s var(--ease-void);
+}
+
+.void-overlay--transparent {
+  opacity: 0;
+}
+
+/* ── Keyframes ── */
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* ── Glass Card (used in sections) ── */
+.glass-card {
+  background: rgba(10, 10, 26, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(79, 195, 247, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(79, 195, 247, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: border-color 0.3s var(--ease-void),
+    box-shadow 0.3s var(--ease-void);
+}
+
+.glass-card:hover {
+  border-color: rgba(79, 195, 247, 0.4);
+  box-shadow: 0 0 50px rgba(79, 195, 247, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ── Glow Text ── */
+.glow-text {
+  text-shadow: 0 0 10px var(--color-gojo-blue),
+    0 0 30px var(--color-gojo-purple), 0 0 60px rgba(79, 195, 247, 0.3);
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
