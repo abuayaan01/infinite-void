@@ -16,6 +16,16 @@ interface Streak {
   startDist: number;
 }
 
+interface Star {
+  id: number;
+  angle: number;
+  distance: number;
+  thickness: number;
+  color: string;
+  duration: number;
+  delay: number;
+}
+
 const COLORS = [
   "#4fc3f7",
   "#7c4dff",
@@ -42,8 +52,24 @@ function generateStreaks(count: number): Streak[] {
   });
 }
 
+function generateStars(count: number): Star[] {
+  return Array.from({ length: count }, (_, i) => {
+    const baseAngle = (360 / count) * i;
+    return {
+      id: i,
+      angle: baseAngle + (Math.random() - 0.5) * (360 / count) * 0.8,
+      distance: 40 + Math.random() * 60,
+      thickness: 1.5 + Math.random() * 2.5,
+      color: COLORS[3],
+      duration: 1.4 + Math.random() * 1.0,
+      delay: Math.random() * 2,
+    };
+  });
+}
+
 export function WarpSequence({ phase }: WarpSequenceProps) {
   const streaks = useMemo(() => generateStreaks(200), []);
+  const stars = useMemo(() => generateStars(50), []);
 
   const isWarping = phase === "warping";
   const isFlashing = phase === "flashing";
@@ -58,6 +84,17 @@ export function WarpSequence({ phase }: WarpSequenceProps) {
           15%  { opacity: 1; }
           85%  { opacity: 1; }
           100% { transform: rotate(var(--rot)) translateX(var(--end)); opacity: 0; }
+        }
+        @keyframes starBurst {
+          0% {
+            transform: translate(-50%, -50%) rotate(var(--rot)) translateX(0) scaleX(0.05);
+            opacity: 0;
+          }
+          8% { opacity: 1; }
+          100% {
+            transform: translate(-50%, -50%) rotate(var(--rot)) translateX(var(--dist)) scaleX(1);
+            opacity: 1;
+          }
         }
         @keyframes coreFlare {
           0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
@@ -157,6 +194,28 @@ export function WarpSequence({ phase }: WarpSequenceProps) {
             overflow: "hidden",
           }}
         >
+          {stars.map((streak) => (
+            <div
+              key={streak.id}
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                width: '2px',
+                height: `${streak.thickness}px`,
+                background: `linear-gradient(to right, ${streak.color}, ${streak.color}aa 30%, transparent)`,
+                borderRadius: '2px',
+                boxShadow: `0 0 ${streak.thickness * 3}px ${streak.color}`,
+                ['--rot' as string]: `${streak.angle}deg`,
+                ['--dist' as string]: `${streak.distance}vmax`,
+                transform: 'translate(-50%, -50%) rotate(var(--rot)) translateX(0) scaleX(0.05)',
+                transformOrigin: '0% 50%',
+                animation: `starBurst 2s cubic-bezier(0.15, 0.4, 0.3, 1) ${streak.delay}s forwards`,
+                opacity: 0,
+              }}
+            />
+          ))}
+
           {streaks.map((streak) => (
             <div
               key={streak.id}
