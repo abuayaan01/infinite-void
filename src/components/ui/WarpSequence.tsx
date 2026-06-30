@@ -147,31 +147,31 @@ export function WarpSequence({ phase }: WarpSequenceProps) {
             }
 
             // Subtle nebula patches
-            // const nebula = (x: number, y: number, r: number, color: string) => {
-            //   const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
-            //   grad.addColorStop(0, color);
-            //   grad.addColorStop(1, "transparent");
-            //   ctx.fillStyle = grad;
-            //   ctx.fillRect(x - r, y - r, r * 2, r * 2);
-            // };
-            // nebula(
-            //   canvas.width * 0.2,
-            //   canvas.height * 0.3,
-            //   180,
-            //   "rgba(80, 40, 120, 0.12)"
-            // );
-            // nebula(
-            //   canvas.width * 0.8,
-            //   canvas.height * 0.6,
-            //   220,
-            //   "rgba(30, 60, 140, 0.1)"
-            // );
-            // nebula(
-            //   canvas.width * 0.5,
-            //   canvas.height * 0.15,
-            //   150,
-            //   "rgba(60, 20, 100, 0.08)"
-            // );
+            const nebula = (x: number, y: number, r: number, color: string) => {
+              const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+              grad.addColorStop(0, color);
+              grad.addColorStop(1, "transparent");
+              ctx.fillStyle = grad;
+              ctx.fillRect(x - r, y - r, r * 2, r * 2);
+            };
+            nebula(
+              canvas.width * 0.2,
+              canvas.height * 0.3,
+              180,
+              "rgba(80, 40, 120, 0.12)"
+            );
+            nebula(
+              canvas.width * 0.8,
+              canvas.height * 0.6,
+              220,
+              "rgba(30, 60, 140, 0.1)"
+            );
+            nebula(
+              canvas.width * 0.5,
+              canvas.height * 0.15,
+              150,
+              "rgba(60, 20, 100, 0.08)"
+            );
           }}
           style={{
             position: "fixed",

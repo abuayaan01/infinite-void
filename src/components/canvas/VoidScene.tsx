@@ -1,27 +1,27 @@
-import { useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
+//Stable void scene
+
+import { Canvas } from "@react-three/fiber";
+import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
+import { useRef } from "react";
 // import { BlendFunction } from 'postprocessing'
-import { ParticleSystem } from './ParticleSystem'
-import type { DomainPhase } from '@/types'
-import * as THREE from 'three'
+import type { DomainPhase } from "@/types";
+import * as THREE from "three";
+import { CameraRig } from "@components/camera/CameraRig";
+import { StarField } from "@canvas/StarField";
+import { CosmicDust } from "./CosmicDust";
+import { ParticleSystem } from "./ParticleSystem";
+import { VoidCore } from "../three/VoidCore";
 
 /* ── Inner scene (inside Canvas context) ── */
 function SceneContents({ phase }: { phase: DomainPhase }) {
-  const groupRef = useRef<THREE.Group>(null)
+  const groupRef = useRef<THREE.Group>(null);
 
-  // Subtle camera breathing effect
-  useFrame(({ camera, clock }) => {
-    const t = clock.getElapsedTime()
-    camera.position.y = Math.sin(t * 0.3) * 0.3
-    camera.position.x = Math.cos(t * 0.2) * 0.2
-    camera.lookAt(0, 0, 0)
-  })
-
-  const isActive = phase === 'activating' || phase === 'expanded'
+  const isActive = phase === "activating" || phase === "expanded";
 
   return (
     <>
+      <CameraRig />
+
       {/* Ambient fill — very dark blue */}
       <ambientLight intensity={0.05} color="#1a1a3e" />
 
@@ -44,11 +44,27 @@ function SceneContents({ phase }: { phase: DomainPhase }) {
       />
 
       <group ref={groupRef}>
-        <ParticleSystem
-          count={1000}
-          spread={200}
+        {/* <ParticleSystem /> */}
+
+        <StarField
+          count={2000}
+          spread={80}
           active={isActive}
+          opacity={0.9}
+          size={0.35}
         />
+
+        <StarField
+          count={50000}
+          spread={400}
+          active={isActive}
+          opacity={0.35}
+          size={0.15}
+        />
+
+        <CosmicDust active={isActive} />
+
+        <VoidCore />
       </group>
 
       {/* Post processing */}
@@ -68,12 +84,12 @@ function SceneContents({ phase }: { phase: DomainPhase }) {
         />
       </EffectComposer>
     </>
-  )
+  );
 }
 
 /* ── Exported canvas wrapper ── */
 interface VoidSceneProps {
-  phase: DomainPhase
+  phase: DomainPhase;
 }
 
 export function VoidScene({ phase }: VoidSceneProps) {
@@ -85,13 +101,15 @@ export function VoidScene({ phase }: VoidSceneProps) {
           antialias: true,
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.2,
-          powerPreference: 'high-performance',
+          powerPreference: "high-performance",
         }}
         dpr={[1, 2]}
-        frameloop={phase === 'warping' || phase === 'activating' ? 'never' : 'always'}
+        frameloop={
+          phase === "warping" || phase === "activating" ? "never" : "always"
+        }
       >
         <SceneContents phase={phase} />
       </Canvas>
     </div>
-  )
+  );
 }
