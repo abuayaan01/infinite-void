@@ -15,8 +15,8 @@ export function useDomainState(): DomainState {
     firedRef.current = true
 
     setPhase('warping')
-    setTimeout(() => setPhase('flashing'), 2200)
-    setTimeout(() => setPhase('expanded'), 2700)
+    setTimeout(() => setPhase('flashing'), 1700)
+    setTimeout(() => setPhase('expanded'), 2200)
   }, [])
 
   return { phase, activate }

@@ -20,7 +20,7 @@ export default function App() {
       <ActivationScreen phase={phase} onActivate={activate} />
 
       {/* Portfolio content */}
-      {phase === 'expanded' && (
+      {/* {phase === 'expanded' && (
         <main className="ui-layer">
           <section style={{
             minHeight: '100vh',
@@ -42,7 +42,7 @@ export default function App() {
             </p>
           </section>
         </main>
-      )}
+      )} */}
     </>
   )
 }

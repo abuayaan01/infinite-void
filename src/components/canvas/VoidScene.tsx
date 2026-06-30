@@ -45,7 +45,7 @@ function SceneContents({ phase }: { phase: DomainPhase }) {
 
       <group ref={groupRef}>
         <ParticleSystem
-          count={10000}
+          count={1000}
           spread={200}
           active={isActive}
         />

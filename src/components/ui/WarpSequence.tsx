@@ -1,129 +1,203 @@
-import { useMemo } from 'react'
-import type { DomainPhase } from '@/types'
+import { useMemo } from "react";
+import type { DomainPhase } from "@/types";
 
 interface WarpSequenceProps {
-  phase: DomainPhase
+  phase: DomainPhase;
 }
 
 interface Streak {
-  id: number
-  angle: number
-  length: number
-  color: string
-  thickness: number
-  opacity: number
-  duration: number
-  delay: number
+  id: number;
+  angle: number;
+  length: number;
+  thickness: number;
+  color: string;
+  duration: number;
+  delay: number;
+  startDist: number;
 }
 
 const COLORS = [
-  '#4fc3f7',
-  '#7c4dff',
-  '#b39ddb',
-  '#ffffff',
-  '#c62828',
-  '#9c27b0',
-  '#64b5f6',
-]
+  "#4fc3f7",
+  "#7c4dff",
+  "#b39ddb",
+  "#ffffff",
+  "#e91e63",
+  "#9c27b0",
+  "#81d4fa",
+];
 
 function generateStreaks(count: number): Streak[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i,
-    angle: (360 / count) * i + (Math.random() - 0.5) * 5,
-    length: 40 + Math.random() * 60,
-    color: COLORS[Math.floor(Math.random() * COLORS.length)],
-    thickness: 0.8 + Math.random() * 2.2,
-    opacity: 0.6 + Math.random() * 0.4,
-    duration: 1.0 + Math.random() * 1.0,
-    delay: Math.random() * 0.3,
-  }))
+  return Array.from({ length: count }, (_, i) => {
+    const baseAngle = (360 / count) * i;
+    return {
+      id: i,
+      angle: baseAngle + (Math.random() - 0.5) * (360 / count) * 0.9,
+      length: 8 + Math.random() * 18,
+      thickness: 1 + Math.random() * 2,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      duration: 0.4 + Math.random() * 0.5,
+      delay: Math.random() * 1.8,
+      startDist: 5 + Math.random() * 25,
+    };
+  });
 }
 
 export function WarpSequence({ phase }: WarpSequenceProps) {
-  const streaks = useMemo(() => generateStreaks(120), [])
+  const streaks = useMemo(() => generateStreaks(200), []);
 
-  const isWarping  = phase === 'warping'
-  const isFlashing = phase === 'flashing'
+  const isWarping = phase === "warping";
+  const isFlashing = phase === "flashing";
 
-  if (!isWarping && !isFlashing) return null
+  if (!isWarping && !isFlashing) return null;
 
   return (
     <>
       <style>{`
-        @keyframes streakGrow {
-          0%   { transform: scaleX(0); opacity: 0; }
-          5%   { opacity: 1; }
-          100% { transform: scaleX(1); opacity: 1; }
+        @keyframes streakPass {
+          0%   { transform: rotate(var(--rot)) translateX(var(--start)); opacity: 0; }
+          15%  { opacity: 1; }
+          85%  { opacity: 1; }
+          100% { transform: rotate(var(--rot)) translateX(var(--end)); opacity: 0; }
         }
-        @keyframes centerPulse {
-          0%   { transform: scale(1);  opacity: 0.4; }
-          100% { transform: scale(12); opacity: 0; }
+        @keyframes coreFlare {
+          0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+          20%  { opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(8); opacity: 0; }
         }
         @keyframes flashFade {
           0%   { opacity: 1; }
           100% { opacity: 0; }
         }
+        @keyframes starfieldFade {
+          0%   { opacity: 0; }
+          100% { opacity: 1; }
+        }
       `}</style>
 
-      {/* Black base */}
-      <div style={{
-        position: 'fixed', inset: 0, zIndex: 9990,
-        background: '#000', pointerEvents: 'none',
-      }} />
-
-      {/* Streaks */}
       {isWarping && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 9991,
-          pointerEvents: 'none', overflow: 'hidden',
-        }}>
-          {streaks.map((streak) => {
-            const rad = (streak.angle * Math.PI) / 180
-            const x1  = 50 + Math.cos(rad) * 3
-            const y1  = 50 + Math.sin(rad) * 3
+        <canvas
+          ref={(canvas) => {
+            if (!canvas) return;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const ctx = canvas.getContext("2d")!;
 
-            return (
-              <div
-                key={streak.id}
-                style={{
-                  position: 'absolute',
-                  left: `${x1}vw`,
-                  top:  `${y1}vh`,
-                  width:  `${streak.length}vw`,
-                  height: `${streak.thickness}px`,
-                  background: `linear-gradient(to right, ${streak.color}, transparent)`,
-                  opacity: 0,
-                  transformOrigin: '0% 50%',
-                  transform: `rotate(${streak.angle}deg) scaleX(0)`,
-                  animation: `streakGrow ${streak.duration}s cubic-bezier(0.1, 0, 0.8, 1) ${streak.delay}s forwards`,
-                  mixBlendMode: 'screen',
-                }}
-              />
-            )
-          })}
+            // Deep space background
+            ctx.fillStyle = "#00010a";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-          {/* Center glow */}
-          <div style={{
-            position: 'absolute',
-            left: '50%', top: '50%',
-            width: '60px', height: '60px',
-            marginLeft: '-30px', marginTop: '-30px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, #fff 0%, #4fc3f7 40%, transparent 70%)',
-            animation: 'centerPulse 2s ease-in forwards',
-            zIndex: 9992,
-          }} />
+            // Stars — tiny bright dots
+            for (let i = 0; i < 800; i++) {
+              const x = Math.random() * canvas.width;
+              const y = Math.random() * canvas.height;
+              const r = Math.random() * 1.2;
+              const brightness = 0.3 + Math.random() * 0.7;
+              ctx.beginPath();
+              ctx.arc(x, y, r, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(255, 255, 255, ${brightness * 0.35})`;
+              ctx.fill();
+            }
+
+            // Space dust — very faint clusters
+            for (let i = 0; i < 200; i++) {
+              const x = Math.random() * canvas.width;
+              const y = Math.random() * canvas.height;
+              const r = 1.5 + Math.random() * 3;
+              ctx.beginPath();
+              ctx.arc(x, y, r, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(100, 120, 200, ${Math.random() * 0.06})`;
+              ctx.fill();
+            }
+
+            // Subtle nebula patches
+            // const nebula = (x: number, y: number, r: number, color: string) => {
+            //   const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+            //   grad.addColorStop(0, color);
+            //   grad.addColorStop(1, "transparent");
+            //   ctx.fillStyle = grad;
+            //   ctx.fillRect(x - r, y - r, r * 2, r * 2);
+            // };
+            // nebula(
+            //   canvas.width * 0.2,
+            //   canvas.height * 0.3,
+            //   180,
+            //   "rgba(80, 40, 120, 0.12)"
+            // );
+            // nebula(
+            //   canvas.width * 0.8,
+            //   canvas.height * 0.6,
+            //   220,
+            //   "rgba(30, 60, 140, 0.1)"
+            // );
+            // nebula(
+            //   canvas.width * 0.5,
+            //   canvas.height * 0.15,
+            //   150,
+            //   "rgba(60, 20, 100, 0.08)"
+            // );
+          }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9990,
+            pointerEvents: "none",
+            opacity: 0,
+            animation: "starfieldFade 1.2s ease-in forwards",
+          }}
+        />
+      )}
+
+      {isWarping && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9991,
+            pointerEvents: "none",
+            overflow: "hidden",
+          }}
+        >
+          {streaks.map((streak) => (
+            <div
+              key={streak.id}
+              style={{
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+                height: `${streak.thickness}px`,
+                width: `${streak.length}vmax`,
+                background: `linear-gradient(to right, transparent, ${streak.color} 30%, ${streak.color} 70%, transparent)`,
+                borderRadius: "9999px",
+                boxShadow: `0 0 ${streak.thickness * 3}px ${streak.color}`,
+                ["--rot" as string]: `${streak.angle}deg`,
+                ["--start" as string]: `${streak.startDist}vmax`,
+                ["--end" as string]: `${
+                  streak.startDist + 60 + Math.random() * 40
+                }vmax`,
+                transform: `rotate(${streak.angle}deg) translateX(${streak.startDist}vmax)`,
+                transformOrigin: "0% 50%",
+                marginTop: `-${streak.thickness / 2}px`,
+                animation: `streakPass ${streak.duration}s linear ${streak.delay}s forwards`,
+                opacity: 0,
+                zIndex: 2,
+              }}
+            />
+          ))}
         </div>
       )}
 
-      {/* Flash */}
       {isFlashing && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 9995,
-          background: 'white', pointerEvents: 'none',
-          animation: 'flashFade 0.5s ease-out forwards',
-        }} />
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9995,
+            background: "white",
+            pointerEvents: "none",
+            animation: "flashFade 0.8s ease-out forwards",
+          }}
+        />
       )}
     </>
-  )
+  );
 }
